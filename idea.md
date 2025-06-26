@@ -1,0 +1,12 @@
+Code a typescript app called Material Launcher that has the following features:
+- A list/task reminder area for managing your day
+- shopping list
+- Weather 
+- Calendar
+- AI assistaint
+- lots more
+- Notes area that uses markdown
+- It should be a desktop AND web app
+- It should follow Google's Material 3 Expressive design princibles.
+- It should be useable as a Day manager
+- it should be coded as though you are a proffentional developer

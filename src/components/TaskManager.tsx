@@ -1,11 +1,14 @@
 import React, { useState } from 'react'
-import { Box, TextField, Button, List, ListItem, ListItemText, ListItemButton, Checkbox, IconButton, Typography } from '@mui/material'
-import { Add, Delete } from '@mui/icons-material'
+import { Box, TextField, Button, List, ListItem, ListItemText, ListItemButton, Checkbox, IconButton, Typography, Chip } from '@mui/material'
+import { Add, Delete, CheckCircle } from '@mui/icons-material'
 import { Task } from '../types'
+import { useLocalStorage } from '../hooks/useLocalStorage'
 
 const TaskManager: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([])
+  const [tasks, setTasks] = useLocalStorage<Task[]>('tasks', [])
   const [newTask, setNewTask] = useState('')
+
+  const completedCount = tasks.filter(task => task.completed).length
 
   const addTask = () => {
     if (newTask.trim()) {
@@ -32,7 +35,15 @@ const TaskManager: React.FC = () => {
 
   return (
     <Box>
-      <Typography variant="h6" gutterBottom>Daily Tasks</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="h6">Daily Tasks</Typography>
+        <Chip 
+          icon={<CheckCircle />} 
+          label={`${completedCount}/${tasks.length}`} 
+          color={completedCount === tasks.length && tasks.length > 0 ? 'success' : 'default'}
+          size="small"
+        />
+      </Box>
       <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
         <TextField
           fullWidth

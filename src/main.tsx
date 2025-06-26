@@ -1,30 +1,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
-import { ThemeProvider, createTheme } from '@mui/material/styles'
+import { ThemeProvider } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
+import { createAppTheme } from './theme'
 
-const theme = createTheme({
-  palette: {
-    mode: 'light',
-    primary: {
-      main: '#6750A4',
-    },
-    secondary: {
-      main: '#625B71',
-    },
-    background: {
-      default: '#FFFBFE',
-      paper: '#FFFBFE',
-    },
-  },
-  shape: {
-    borderRadius: 12,
-  },
-  typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-  },
-})
+const savedTheme = localStorage.getItem('theme-mode') as 'light' | 'dark' | null
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+const initialMode = savedTheme || (prefersDark ? 'dark' : 'light')
+
+const theme = createAppTheme(initialMode)
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

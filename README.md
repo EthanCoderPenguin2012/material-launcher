@@ -1,9 +1,12 @@
 # Material Launcher
 
 [![CI](https://github.com/yourusername/material-launcher/workflows/CI/badge.svg)](https://github.com/yourusername/material-launcher/actions)
+[![Deploy](https://github.com/yourusername/material-launcher/workflows/Deploy/badge.svg)](https://github.com/yourusername/material-launcher/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![Code Quality](https://img.shields.io/badge/Code%20Quality-ESLint%20%2B%20Prettier-brightgreen)](https://eslint.org/)
+[![Testing](https://img.shields.io/badge/Testing-Vitest-yellow)](https://vitest.dev/)
 
 A modern day manager and productivity app built with TypeScript, React, and Material-UI 3, following Google's Material Design principles.
 
@@ -27,6 +30,20 @@ A modern day manager and productivity app built with TypeScript, React, and Mate
 - Electron (for desktop app)
 - React Markdown
 
+## Installation
+
+### From GitHub Packages
+```bash
+npm install @ethan/material-launcher
+```
+
+### From Source
+```bash
+git clone https://github.com/EthanCoderPenguin2012/material-launcher.git
+cd material-launcher
+npm install
+```
+
 ## Development
 
 ```bash
@@ -44,7 +61,20 @@ npm run build
 
 # Build desktop app
 npm run dist
+
+# Run tests
+npm test
+
+# Run linter
+npm run lint
+
+# Format code
+npm run format
 ```
+
+## Live Demo
+
+🌐 [Try Material Launcher](https://yourusername.github.io/material-launcher/)
 
 ## Usage
 

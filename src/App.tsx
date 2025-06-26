@@ -1,14 +1,25 @@
 import React, { useState } from 'react'
-import { Box, Container, Grid, Paper, Typography, Tabs, Tab } from '@mui/material'
+import { Box, Container, Paper, Typography, Tabs, Tab, IconButton, useTheme } from '@mui/material'
+import { DarkMode, LightMode } from '@mui/icons-material'
 import TaskManager from './components/TaskManager'
 import ShoppingList from './components/ShoppingList'
 import Weather from './components/Weather'
 import Calendar from './components/Calendar'
 import AIAssistant from './components/AIAssistant'
 import Notes from './components/Notes'
+import QuickActions from './components/QuickActions'
+import { useLocalStorage } from './hooks/useLocalStorage'
 
 function App() {
   const [activeTab, setActiveTab] = useState(0)
+  const [themeMode, setThemeMode] = useLocalStorage<'light' | 'dark'>('theme-mode', 'light')
+  const theme = useTheme()
+
+  const toggleTheme = () => {
+    const newMode = themeMode === 'light' ? 'dark' : 'light'
+    setThemeMode(newMode)
+    window.location.reload() // Simple theme switch - in production use context
+  }
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue)
@@ -16,21 +27,27 @@ function App() {
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case 0: return <TaskManager />
-      case 1: return <ShoppingList />
-      case 2: return <Weather />
-      case 3: return <Calendar />
-      case 4: return <AIAssistant />
-      case 5: return <Notes />
-      default: return <TaskManager />
+      case 0: return <QuickActions />
+      case 1: return <TaskManager />
+      case 2: return <ShoppingList />
+      case 3: return <Weather />
+      case 4: return <Calendar />
+      case 5: return <AIAssistant />
+      case 6: return <Notes />
+      default: return <QuickActions />
     }
   }
 
   return (
     <Container maxWidth="lg" sx={{ py: 2 }}>
-      <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 600, color: 'primary.main' }}>
-        Material Launcher
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="h4" component="h1" sx={{ fontWeight: 600, color: 'primary.main' }}>
+          Material Launcher
+        </Typography>
+        <IconButton onClick={toggleTheme} color="primary">
+          {themeMode === 'light' ? <DarkMode /> : <LightMode />}
+        </IconButton>
+      </Box>
       
       <Paper elevation={1} sx={{ borderRadius: 3, overflow: 'hidden' }}>
         <Tabs 
@@ -40,6 +57,7 @@ function App() {
           scrollButtons="auto"
           sx={{ borderBottom: 1, borderColor: 'divider' }}
         >
+          <Tab label="Dashboard" />
           <Tab label="Tasks" />
           <Tab label="Shopping" />
           <Tab label="Weather" />

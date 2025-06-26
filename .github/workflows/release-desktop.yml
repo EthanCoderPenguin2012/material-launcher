@@ -1,0 +1,72 @@
+name: Release Desktop Apps
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+
+jobs:
+  build-desktop:
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Build web app
+      run: npm run build
+    
+    - name: Build Electron app
+      run: npm run dist
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: desktop-${{ matrix.os }}
+        path: release/*
+
+  create-release:
+    needs: build-desktop
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: ./artifacts
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ github.event.inputs.version }}
+        name: Material Launcher ${{ github.event.inputs.version }}
+        draft: true
+        prerelease: false
+        files: |
+          artifacts/desktop-windows-latest/*
+          artifacts/desktop-macos-latest/*
+          artifacts/desktop-ubuntu-latest/*
+        body_path: UPDATES.md
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

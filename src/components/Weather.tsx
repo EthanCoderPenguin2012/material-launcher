@@ -1,20 +1,28 @@
-import React, { useState } from 'react'
-import { Box, Card, CardContent, Typography, TextField, Button } from '@mui/material'
-import { Cloud, WbSunny } from '@mui/icons-material'
+import React, { useState, useEffect } from 'react'
+import { Box, Card, CardContent, Typography, TextField, Button, CircularProgress } from '@mui/material'
+import { Cloud, WbSunny, Thermostat, LocationOn } from '@mui/icons-material'
 import { WeatherData } from '../types'
 
 const Weather: React.FC = () => {
   const [weather, setWeather] = useState<WeatherData | null>(null)
   const [location, setLocation] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const fetchWeather = () => {
-    // Mock weather data - in production, integrate with weather API
+  useEffect(() => {
+    fetchWeather()
+  }, [])
+
+  const fetchWeather = async () => {
+    setLoading(true)
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    
     const mockWeather: WeatherData = {
       temperature: Math.floor(Math.random() * 30) + 10,
       condition: Math.random() > 0.5 ? 'Sunny' : 'Cloudy',
       location: location || 'Current Location'
     }
     setWeather(mockWeather)
+    setLoading(false)
   }
 
   return (
@@ -32,19 +40,29 @@ const Weather: React.FC = () => {
         </Button>
       </Box>
       
-      {weather && (
-        <Card sx={{ maxWidth: 300 }}>
-          <CardContent sx={{ textAlign: 'center' }}>
-            {weather.condition === 'Sunny' ? <WbSunny sx={{ fontSize: 60, color: 'orange' }} /> : <Cloud sx={{ fontSize: 60, color: 'gray' }} />}
-            <Typography variant="h4" component="div">
-              {weather.temperature}°C
-            </Typography>
-            <Typography variant="h6" color="text.secondary">
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+          <CircularProgress />
+        </Box>
+      ) : weather && (
+        <Card sx={{ maxWidth: 350, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+          <CardContent sx={{ textAlign: 'center', color: 'white' }}>
+            {weather.condition === 'Sunny' ? <WbSunny sx={{ fontSize: 80, color: '#FFD700' }} /> : <Cloud sx={{ fontSize: 80, color: '#E0E0E0' }} />}
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mt: 2 }}>
+              <Thermostat sx={{ mr: 1 }} />
+              <Typography variant="h3" component="div" sx={{ fontWeight: 'bold' }}>
+                {weather.temperature}°C
+              </Typography>
+            </Box>
+            <Typography variant="h5" sx={{ mt: 1, opacity: 0.9 }}>
               {weather.condition}
             </Typography>
-            <Typography variant="body2">
-              {weather.location}
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mt: 1 }}>
+              <LocationOn sx={{ mr: 0.5, fontSize: 16 }} />
+              <Typography variant="body1" sx={{ opacity: 0.8 }}>
+                {weather.location}
+              </Typography>
+            </Box>
           </CardContent>
         </Card>
       )}

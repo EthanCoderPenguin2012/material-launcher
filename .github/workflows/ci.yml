@@ -31,6 +31,16 @@ jobs:
     
     - name: Run type check
       run: npx tsc --noEmit
+    
+    - name: Run linter
+      run: npx eslint src --ext .ts,.tsx
+    
+    - name: Run tests
+      run: npm test
+    
+    - name: Upload coverage
+      uses: codecov/codecov-action@v3
+      if: matrix.node-version == '20.x'
 
   build-electron:
     runs-on: ${{ matrix.os }}
@@ -56,3 +66,10 @@ jobs:
     
     - name: Build Electron app
       run: npm run dist
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: electron-${{ matrix.os }}
+        path: release/*
+

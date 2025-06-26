@@ -1,15 +1,22 @@
 import React, { useState } from 'react'
-import { Box, TextField, Button, List, ListItem, ListItemText, ListItemButton, IconButton, Typography, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material'
-import { Add, Edit, Delete } from '@mui/icons-material'
+import { Box, TextField, Button, List, ListItem, ListItemText, ListItemButton, IconButton, Typography, Dialog, DialogTitle, DialogContent, DialogActions, InputAdornment } from '@mui/material'
+import { Add, Edit, Delete, Search } from '@mui/icons-material'
 import ReactMarkdown from 'react-markdown'
 import { Note } from '../types'
+import { useLocalStorage } from '../hooks/useLocalStorage'
 
 const Notes: React.FC = () => {
-  const [notes, setNotes] = useState<Note[]>([])
+  const [notes, setNotes] = useLocalStorage<Note[]>('notes', [])
   const [selectedNote, setSelectedNote] = useState<Note | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [editTitle, setEditTitle] = useState('')
   const [editContent, setEditContent] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
+
+  const filteredNotes = notes.filter(note => 
+    note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    note.content.toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
   const createNote = () => {
     const newNote: Note = {
@@ -59,8 +66,23 @@ const Notes: React.FC = () => {
             New
           </Button>
         </Box>
+        <TextField
+          fullWidth
+          size="small"
+          placeholder="Search notes..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Search />
+              </InputAdornment>
+            ),
+          }}
+          sx={{ mb: 2 }}
+        />
         <List>
-          {notes.map((note) => (
+          {filteredNotes.map((note) => (
             <ListItem key={note.id} disablePadding>
               <ListItemButton 
                 selected={selectedNote?.id === note.id}

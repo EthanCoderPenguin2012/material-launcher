@@ -1,0 +1,67 @@
+name: Update Changelog
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  update-changelog:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
+    
+    - name: Get commit info
+      id: commit
+      run: |
+        echo "message=$(git log -1 --pretty=format:'%s')" >> $GITHUB_OUTPUT
+        echo "hash=$(git log -1 --pretty=format:'%h')" >> $GITHUB_OUTPUT
+        echo "date=$(date +'%Y-%m-%d %H:%M')" >> $GITHUB_OUTPUT
+    
+    - name: Get file changes
+      id: changes
+      run: |
+        echo "files<<EOF" >> $GITHUB_OUTPUT
+        git diff --name-only HEAD~1 HEAD | head -10 >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+    
+    - name: Update UPDATES.md
+      run: |
+        # Create temp file with new entry
+        cat > temp_entry.md << EOF
+        
+        ## Latest Changes ($(date +'%Y-%m-%d %H:%M'))
+        
+        **Commit**: [${{ steps.commit.outputs.hash }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+        **Message**: ${{ steps.commit.outputs.message }}
+        
+        **Files Changed**:
+        EOF
+        
+        # Add changed files
+        echo "${{ steps.changes.outputs.files }}" | while read file; do
+          if [ ! -z "$file" ]; then
+            echo "- \`$file\`" >> temp_entry.md
+          fi
+        done
+        
+        # Insert at top of UPDATES.md after first heading
+        sed '1,/^# Updates & Changelog/r temp_entry.md' UPDATES.md > temp_updates.md
+        mv temp_updates.md UPDATES.md
+        rm temp_entry.md
+    
+    - name: Commit changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add UPDATES.md
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Auto-update changelog [skip ci]"
+          git push
+        fi

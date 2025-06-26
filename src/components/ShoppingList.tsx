@@ -1,11 +1,14 @@
 import React, { useState } from 'react'
-import { Box, TextField, Button, List, ListItem, ListItemText, ListItemButton, Checkbox, IconButton, Typography } from '@mui/material'
-import { Add, Delete } from '@mui/icons-material'
+import { Box, TextField, Button, List, ListItem, ListItemText, ListItemButton, Checkbox, IconButton, Typography, Chip } from '@mui/material'
+import { Add, Delete, ShoppingCart } from '@mui/icons-material'
 import { ShoppingItem } from '../types'
+import { useLocalStorage } from '../hooks/useLocalStorage'
 
 const ShoppingList: React.FC = () => {
-  const [items, setItems] = useState<ShoppingItem[]>([])
+  const [items, setItems] = useLocalStorage<ShoppingItem[]>('shopping-items', [])
   const [newItem, setNewItem] = useState('')
+
+  const remainingCount = items.filter(item => !item.completed).length
 
   const addItem = () => {
     if (newItem.trim()) {
@@ -31,7 +34,15 @@ const ShoppingList: React.FC = () => {
 
   return (
     <Box>
-      <Typography variant="h6" gutterBottom>Shopping List</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="h6">Shopping List</Typography>
+        <Chip 
+          icon={<ShoppingCart />} 
+          label={`${remainingCount} items`} 
+          color="primary"
+          size="small"
+        />
+      </Box>
       <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
         <TextField
           fullWidth

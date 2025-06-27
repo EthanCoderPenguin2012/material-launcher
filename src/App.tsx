@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Container, Paper, Typography, Tabs, Tab, IconButton, useTheme } from '@mui/material'
+import { Box, Container, Paper, Typography, Tabs, Tab, IconButton } from '@mui/material'
 import { DarkMode, LightMode } from '@mui/icons-material'
 import TaskManager from './components/TaskManager'
 import ShoppingList from './components/ShoppingList'
@@ -13,7 +13,7 @@ import { useLocalStorage } from './hooks/useLocalStorage'
 function App() {
   const [activeTab, setActiveTab] = useState(0)
   const [themeMode, setThemeMode] = useLocalStorage<'light' | 'dark'>('theme-mode', 'light')
-  const theme = useTheme()
+
 
   const toggleTheme = () => {
     const newMode = themeMode === 'light' ? 'dark' : 'light'

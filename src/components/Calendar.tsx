@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Typography, Card, CardContent, Grid } from '@mui/material'
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday } from 'date-fns'
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isToday } from 'date-fns'
 
 const Calendar: React.FC = () => {
   const today = new Date()

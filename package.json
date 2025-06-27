@@ -104,7 +104,8 @@
         }
       ],
       "icon": "assets/icon.png"
-    }
+    },
+    "publish": null
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"

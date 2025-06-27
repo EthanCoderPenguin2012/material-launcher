@@ -2,7 +2,7 @@
   "name": "@yourusername/material-launcher",
   "version": "1.0.0",
   "description": "A Material 3 day manager and productivity app",
-  "main": "dist/main.js",
+  "main": "electron.js",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -59,8 +59,7 @@
     },
     "files": [
       "dist/**/*",
-      "electron.js",
-      "package.json"
+      "electron.js"
     ],
     "win": {
       "target": [

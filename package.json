@@ -1,5 +1,5 @@
 {
-  "name": "@yourusername/material-launcher",
+  "name": "material-launcher",
   "version": "1.0.0",
   "description": "A Material 3 day manager and productivity app",
   "main": "electron.js",
@@ -59,7 +59,8 @@
     "appId": "com.materiallauncher.app",
     "productName": "Material Launcher",
     "directories": {
-      "output": "release"
+      "output": "release",
+      "buildResources": "assets"
     },
     "files": [
       "dist/**/*",

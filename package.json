@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "A Material 3 day manager and productivity app",
   "main": "electron.js",
+  "author": {
+    "name": "EthanCoderPenguin2012",
+    "email": "ethan.h.patmore@gmail.com"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

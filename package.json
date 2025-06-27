@@ -1,5 +1,5 @@
 {
-  "name": "@yourusername/material-launcher",
+  "name": "@ethancoderpenguin2012/material-launcher",
   "version": "1.0.0",
   "description": "A Material 3 day manager and productivity app",
   "main": "electron.js",
@@ -113,6 +113,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/material-launcher.git"
+    "url": "git+https://github.com/EthanCoderPenguin2012/material-launcher.git"
   }
 }

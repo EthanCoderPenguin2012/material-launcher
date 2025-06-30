@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, AppBar, Toolbar, Typography, IconButton, Avatar, Divider, ThemeProvider } from '@mui/material'
-import { Dashboard as DashboardIcon, Assignment, ShoppingCart, WbSunny, CalendarMonth, Psychology, StickyNote2, Settings as SettingsIcon, Timer, TrackChanges, Calculate, Bookmark, DarkMode, LightMode, Menu } from '@mui/icons-material'
+import { Dashboard as DashboardIcon, Assignment, ShoppingCart, WbSunny, CalendarMonth, Psychology, StickyNote2, Settings as SettingsIcon, Timer, TrackChanges, Calculate, Bookmark, Folder, MonitorHeart, Security, MusicNote, Code, Launch, NetworkCheck, DarkMode, LightMode, Menu } from '@mui/icons-material'
 import TaskManager from './components/TaskManager'
 import ShoppingList from './components/ShoppingList'
 import Weather from './components/Weather'
@@ -12,6 +12,13 @@ import Pomodoro from './components/Pomodoro'
 import Habits from './components/Habits'
 import Calculator from './components/Calculator'
 import Bookmarks from './components/Bookmarks'
+import FileManager from './components/FileManager'
+import SystemMonitor from './components/SystemMonitor'
+import PasswordManager from './components/PasswordManager'
+import MusicPlayer from './components/MusicPlayer'
+import CodeEditor from './components/CodeEditor'
+import QuickLauncher from './components/QuickLauncher'
+import NetworkTools from './components/NetworkTools'
 import Settings from './components/Settings'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { createAppTheme } from './theme'
@@ -30,7 +37,14 @@ const menuItems = [
   { id: 8, label: 'Notes', icon: <StickyNote2 /> },
   { id: 9, label: 'Calculator', icon: <Calculate /> },
   { id: 10, label: 'Bookmarks', icon: <Bookmark /> },
-  { id: 11, label: 'Settings', icon: <SettingsIcon /> },
+  { id: 11, label: 'Files', icon: <Folder /> },
+  { id: 12, label: 'System', icon: <MonitorHeart /> },
+  { id: 13, label: 'Passwords', icon: <Security /> },
+  { id: 14, label: 'Music', icon: <MusicNote /> },
+  { id: 15, label: 'Code', icon: <Code /> },
+  { id: 16, label: 'Launcher', icon: <Launch /> },
+  { id: 17, label: 'Network', icon: <NetworkCheck /> },
+  { id: 18, label: 'Settings', icon: <SettingsIcon /> },
 ]
 
 function App() {
@@ -63,7 +77,14 @@ function App() {
       case 8: return <Notes />
       case 9: return <Calculator />
       case 10: return <Bookmarks />
-      case 11: return <Settings 
+      case 11: return <FileManager />
+      case 12: return <SystemMonitor />
+      case 13: return <PasswordManager />
+      case 14: return <MusicPlayer />
+      case 15: return <CodeEditor />
+      case 16: return <QuickLauncher />
+      case 17: return <NetworkTools />
+      case 18: return <Settings 
         themeMode={themeMode} 
         themeColor={themeColor}
         onThemeModeChange={setThemeMode}

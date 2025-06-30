@@ -98,13 +98,17 @@
         {
           "target": "deb",
           "arch": ["x64"]
-        },
-        {
-          "target": "rpm",
-          "arch": ["x64"]
         }
       ],
-      "icon": "assets/icon.png"
+      "icon": "assets/icon.png",
+      "category": "Utility",
+      "maintainer": "EthanCoderPenguin2012 <ethan.h.patmore@gmail.com>",
+      "desktop": {
+        "Name": "Material Launcher",
+        "Comment": "A Material 3 day manager and productivity app",
+        "Categories": "Utility;Productivity;"
+      },
+      "executableName": "material-launcher"
     },
     "publish": null
   },

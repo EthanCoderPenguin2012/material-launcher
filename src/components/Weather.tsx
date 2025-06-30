@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Box, Card, CardContent, Typography, TextField, Button, CircularProgress } from '@mui/material'
 import { Cloud, WbSunny, Thermostat, LocationOn } from '@mui/icons-material'
 import { WeatherData } from '../types'
@@ -8,11 +8,7 @@ const Weather: React.FC = () => {
   const [location, setLocation] = useState('')
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    fetchWeather()
-  }, [])
-
-  const fetchWeather = async () => {
+  const fetchWeather = useCallback(async () => {
     setLoading(true)
     await new Promise(resolve => setTimeout(resolve, 1000))
     
@@ -23,7 +19,11 @@ const Weather: React.FC = () => {
     }
     setWeather(mockWeather)
     setLoading(false)
-  }
+  }, [location])
+
+  useEffect(() => {
+    fetchWeather()
+  }, [fetchWeather])
 
   return (
     <Box>

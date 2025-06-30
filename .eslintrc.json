@@ -1,16 +1,27 @@
 {
-  "extends": ["eslint:recommended"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended"
+  ],
   "parser": "@typescript-eslint/parser",
+  "plugins": ["react", "react-hooks"],
   "env": {
     "browser": true,
     "es2021": true,
-    "node": true
+    "node": true,
+    "jest": true
   },
   "globals": {
-    "React": "readonly",
     "describe": "readonly",
     "test": "readonly",
-    "expect": "readonly"
+    "expect": "readonly",
+    "vi": "readonly"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
   },
   "parserOptions": {
     "ecmaVersion": "latest",
@@ -20,6 +31,7 @@
     }
   },
   "rules": {
-    "no-unused-vars": "off"
+    "no-unused-vars": "off",
+    "react/react-in-jsx-scope": "off"
   }
 }

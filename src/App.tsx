@@ -14,7 +14,6 @@ function App() {
   const [activeTab, setActiveTab] = useState(0)
   const [themeMode, setThemeMode] = useLocalStorage<'light' | 'dark'>('theme-mode', 'light')
 
-
   const toggleTheme = () => {
     const newMode = themeMode === 'light' ? 'dark' : 'light'
     setThemeMode(newMode)

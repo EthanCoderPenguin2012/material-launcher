@@ -100,7 +100,25 @@
           "arch": ["x64"]
         }
       ],
-      "icon": "assets/icon.png"
+      "icon": "assets/icon.png",
+      "category": "Utility",
+      "maintainer": "EthanCoderPenguin2012 <ethan.h.patmore@gmail.com>",
+      "desktop": {
+        "Name": "Material Launcher",
+        "Comment": "A Material 3 day manager and productivity app",
+        "Categories": "Utility;Productivity;"
+      },
+      "executableName": "material-launcher",
+      "depends": [
+        "libgtk-3-0",
+        "libnotify4",
+        "libnss3",
+        "libxss1",
+        "libxtst6",
+        "xdg-utils",
+        "libatspi2.0-0",
+        "libuuid1"
+      ]
     },
     "publish": null
   },

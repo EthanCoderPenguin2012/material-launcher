@@ -108,7 +108,40 @@ const Notes: React.FC = () => {
         {selectedNote ? (
           <Box>
             <Typography variant="h6" gutterBottom>{selectedNote.title}</Typography>
-            <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 1, p: 2, height: 400, overflow: 'auto' }}>
+            <Box sx={{ 
+              border: 1, 
+              borderColor: 'divider', 
+              borderRadius: 1, 
+              p: 2, 
+              height: 400, 
+              overflow: 'auto',
+              '& h1': { fontSize: '2rem', fontWeight: 700, mb: 2 },
+              '& h2': { fontSize: '1.5rem', fontWeight: 600, mb: 1.5 },
+              '& h3': { fontSize: '1.25rem', fontWeight: 600, mb: 1 },
+              '& p': { mb: 1, lineHeight: 1.6 },
+              '& ul, & ol': { pl: 2, mb: 1 },
+              '& li': { mb: 0.5 },
+              '& code': { 
+                bgcolor: 'grey.100', 
+                p: 0.5, 
+                borderRadius: 1, 
+                fontFamily: 'monospace' 
+              },
+              '& pre': { 
+                bgcolor: 'grey.100', 
+                p: 2, 
+                borderRadius: 1, 
+                overflow: 'auto',
+                '& code': { bgcolor: 'transparent', p: 0 }
+              },
+              '& blockquote': {
+                borderLeft: 4,
+                borderColor: 'primary.main',
+                pl: 2,
+                ml: 0,
+                fontStyle: 'italic'
+              }
+            }}>
               <ReactMarkdown>{selectedNote.content}</ReactMarkdown>
             </Box>
           </Box>

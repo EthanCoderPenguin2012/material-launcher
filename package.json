@@ -1,7 +1,7 @@
 {
   "name": "@ethancoderpenguin2012/material-launcher",
   "version": "1.0.0",
-  "description": "A Material 3 day manager and productivity app",
+  "description": "A comprehensive productivity suite with Material Design 3, featuring task management, Pomodoro timer, habit tracking, AI assistant, notes, calendar, and more.",
   "main": "electron.js",
   "author": {
     "name": "EthanCoderPenguin2012",
@@ -78,7 +78,19 @@
           "arch": ["x64"]
         }
       ],
-      "icon": "assets/icon.ico"
+      "requestedExecutionLevel": "asInvoker",
+      "artifactName": "${productName}-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Material Launcher",
+      "include": "build/installer.nsh",
+      "license": "LICENSE",
+      "warningsAsErrors": false
     },
     "mac": {
       "target": [
@@ -86,8 +98,7 @@
           "target": "dmg",
           "arch": ["x64", "arm64"]
         }
-      ],
-      "icon": "assets/icon.icns"
+      ]
     },
     "linux": {
       "target": [
@@ -100,7 +111,6 @@
           "arch": ["x64"]
         }
       ],
-      "icon": "assets/icon.png",
       "category": "Utility",
       "maintainer": "EthanCoderPenguin2012 <ethan.h.patmore@gmail.com>",
       "desktop": {

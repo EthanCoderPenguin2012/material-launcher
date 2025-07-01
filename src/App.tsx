@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, AppBar, Toolbar, Typography, IconButton, Avatar, Divider, ThemeProvider } from '@mui/material'
-import { Dashboard as DashboardIcon, Assignment, ShoppingCart, WbSunny, CalendarMonth, Psychology, StickyNote2, Settings as SettingsIcon, Timer, TrackChanges, Calculate, Bookmark, Folder, MonitorHeart, Security, MusicNote, Code, Launch, NetworkCheck, DarkMode, LightMode, Menu } from '@mui/icons-material'
+import { Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, AppBar, Toolbar, Typography, IconButton, Avatar, Divider, ThemeProvider, Fade, Slide } from '@mui/material'
+import { Dashboard as DashboardIcon, Assignment, ShoppingCart, WbSunny, CalendarMonth, Psychology, StickyNote2, Settings as SettingsIcon, Timer, TrackChanges, Calculate, Bookmark, Folder, MonitorHeart, Security, MusicNote, Code, Launch, NetworkCheck, DarkMode, LightMode, Menu, Computer } from '@mui/icons-material'
 import TaskManager from './components/TaskManager'
 import ShoppingList from './components/ShoppingList'
 import Weather from './components/Weather'
@@ -19,11 +19,12 @@ import MusicPlayer from './components/MusicPlayer'
 import CodeEditor from './components/CodeEditor'
 import QuickLauncher from './components/QuickLauncher'
 import NetworkTools from './components/NetworkTools'
+import RemoteAccess from './components/RemoteAccess'
 import Settings from './components/Settings'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { createAppTheme } from './theme'
 
-const DRAWER_WIDTH = 280
+const DRAWER_WIDTH = 320
 
 const menuItems = [
   { id: 0, label: 'Dashboard', icon: <DashboardIcon /> },
@@ -44,7 +45,8 @@ const menuItems = [
   { id: 15, label: 'Code', icon: <Code /> },
   { id: 16, label: 'Launcher', icon: <Launch /> },
   { id: 17, label: 'Network', icon: <NetworkCheck /> },
-  { id: 18, label: 'Settings', icon: <SettingsIcon /> },
+  { id: 18, label: 'Remote', icon: <Computer /> },
+  { id: 19, label: 'Settings', icon: <SettingsIcon /> },
 ]
 
 function App() {
@@ -84,7 +86,8 @@ function App() {
       case 15: return <CodeEditor />
       case 16: return <QuickLauncher />
       case 17: return <NetworkTools />
-      case 18: return <Settings 
+      case 18: return <RemoteAccess />
+      case 19: return <Settings 
         themeMode={themeMode} 
         themeColor={themeColor}
         onThemeModeChange={setThemeMode}
@@ -96,15 +99,15 @@ function App() {
 
   const drawer = (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ p: 3, textAlign: 'center' }}>
-        <Avatar sx={{ width: 64, height: 64, mx: 'auto', mb: 2, bgcolor: 'primary.main' }}>
-          ML
+      <Box sx={{ p: 3, textAlign: 'center', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' }}>
+        <Avatar sx={{ width: 72, height: 72, mx: 'auto', mb: 2, bgcolor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)' }}>
+          <Typography variant="h4" sx={{ fontWeight: 700 }}>ML</Typography>
         </Avatar>
-        <Typography variant="h6" sx={{ fontWeight: 600 }}>
+        <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
           Material Launcher
         </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Productivity Suite
+        <Typography variant="body2" sx={{ opacity: 0.9 }}>
+          Productivity Suite v1.0
         </Typography>
       </Box>
       
@@ -117,12 +120,22 @@ function App() {
               selected={activeTab === item.id}
               onClick={() => setActiveTab(item.id)}
               sx={{
-                borderRadius: 2,
+                borderRadius: 3,
+                mx: 1,
+                mb: 0.5,
+                transition: 'all 0.2s ease-in-out',
+                '&:hover': {
+                  transform: 'translateX(8px)',
+                  bgcolor: 'action.hover',
+                },
                 '&.Mui-selected': {
                   bgcolor: 'primary.main',
                   color: 'primary.contrastText',
+                  transform: 'translateX(8px)',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                   '&:hover': {
                     bgcolor: 'primary.dark',
+                    transform: 'translateX(8px)',
                   },
                   '& .MuiListItemIcon-root': {
                     color: 'primary.contrastText',
@@ -162,9 +175,9 @@ function App() {
           ml: { sm: `${DRAWER_WIDTH}px` },
           bgcolor: 'background.paper',
           color: 'text.primary',
-          boxShadow: 'none',
-          borderBottom: 1,
-          borderColor: 'divider',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+          borderBottom: 'none',
+          backdropFilter: 'blur(10px)',
         }}
       >
         <Toolbar>
@@ -214,13 +227,26 @@ function App() {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
+          p: 4,
           width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` },
           mt: 8,
           bgcolor: 'background.default',
+          minHeight: 'calc(100vh - 64px)',
+          background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
         }}
       >
-        {renderContent()}
+        <Fade in={true} timeout={500}>
+          <Box sx={{ 
+            bgcolor: 'background.paper', 
+            borderRadius: 4, 
+            p: 4, 
+            boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255,255,255,0.2)'
+          }}>
+            {renderContent()}
+          </Box>
+        </Fade>
       </Box>
     </Box>
     </ThemeProvider>

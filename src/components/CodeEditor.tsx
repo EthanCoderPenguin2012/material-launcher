@@ -24,13 +24,40 @@ hello();`)
   const runCode = () => {
     try {
       if (language === 'javascript') {
+        // Capture console.log output
+        const originalLog = console.log
+        let capturedOutput = ''
+        console.log = (...args) => {
+          capturedOutput += args.join(' ') + '\n'
+        }
+        
         const result = eval(code)
-        setOutput(result ? String(result) : 'Code executed successfully')
+        console.log = originalLog
+        
+        setOutput(capturedOutput || (result !== undefined ? String(result) : 'Code executed successfully'))
+        setActiveTab(1) // Switch to output tab
+      } else if (language === 'html') {
+        // For HTML, show preview
+        setOutput('HTML Preview:\n' + code)
+        setActiveTab(1)
+      } else if (language === 'css') {
+        setOutput('CSS code saved. Apply to HTML for preview.')
+        setActiveTab(1)
+      } else if (language === 'json') {
+        try {
+          JSON.parse(code)
+          setOutput('Valid JSON format ✓')
+        } catch {
+          setOutput('Invalid JSON format ✗')
+        }
+        setActiveTab(1)
       } else {
-        setOutput(`${language} execution not supported in browser`)
+        setOutput(`${language} execution requires server-side support`)
+        setActiveTab(1)
       }
     } catch (error) {
       setOutput(`Error: ${error}`)
+      setActiveTab(1)
     }
   }
 

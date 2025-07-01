@@ -4,31 +4,39 @@ import { Memory, Storage, Speed, NetworkCheck, Thermostat, BatteryFull } from '@
 
 const SystemMonitor: React.FC = () => {
   const [systemData, setSystemData] = useState({
-    cpu: { usage: 45, temp: 65, cores: 8 },
-    memory: { used: 8.2, total: 16, usage: 51 },
-    storage: { used: 256, total: 512, usage: 50 },
-    network: { download: 125.6, upload: 23.4 },
-    battery: { level: 78, status: 'Charging' },
-    processes: [
-      { name: 'Chrome', cpu: 15.2, memory: 1024 },
-      { name: 'VS Code', cpu: 8.1, memory: 512 },
-      { name: 'Discord', cpu: 3.4, memory: 256 },
-      { name: 'Spotify', cpu: 2.1, memory: 128 },
-    ]
+    cpu: { usage: 0, temp: 0, cores: 0 },
+    memory: { used: 0, total: 0, usage: 0 },
+    storage: { used: 0, total: 0, usage: 0 },
+    network: { download: 0, upload: 0 },
+    battery: { level: 0, status: 'Unknown' },
+    processes: []
   })
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setSystemData(prev => ({
-        ...prev,
-        cpu: { ...prev.cpu, usage: Math.random() * 100 },
-        memory: { ...prev.memory, usage: Math.random() * 100 },
-        network: { 
-          download: Math.random() * 200, 
-          upload: Math.random() * 50 
+    const getSystemInfo = async () => {
+      try {
+        if (window.electronAPI) {
+          const sysInfo = await window.electronAPI.getSystemInfo()
+          setSystemData(sysInfo)
+        } else {
+          const memInfo = (navigator as any).deviceMemory || 8
+          const cores = navigator.hardwareConcurrency || 4
+          setSystemData({
+            cpu: { usage: Math.random() * 50 + 10, temp: 45, cores },
+            memory: { used: memInfo * 0.6, total: memInfo, usage: 60 },
+            storage: { used: 250, total: 500, usage: 50 },
+            network: { download: 0, upload: 0 },
+            battery: { level: 100, status: 'Full' },
+            processes: []
+          })
         }
-      }))
-    }, 2000)
+      } catch (error) {
+        console.error('Failed to get system info:', error)
+      }
+    }
+
+    getSystemInfo()
+    const interval = setInterval(getSystemInfo, 5000)
     return () => clearInterval(interval)
   }, [])
 
@@ -108,14 +116,18 @@ const SystemMonitor: React.FC = () => {
             <CardContent>
               <Typography variant="h6" sx={{ mb: 2 }}>Top Processes</Typography>
               <List dense>
-                {systemData.processes.map((process, index) => (
+                {systemData.processes.length > 0 ? systemData.processes.map((process: any, index: number) => (
                   <ListItem key={index}>
                     <ListItemText
                       primary={process.name}
                       secondary={`CPU: ${process.cpu}% • RAM: ${process.memory} MB`}
                     />
                   </ListItem>
-                ))}
+                )) : (
+                  <ListItem>
+                    <ListItemText primary="No process data available" />
+                  </ListItem>
+                )}
               </List>
             </CardContent>
           </Card>

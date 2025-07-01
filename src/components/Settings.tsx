@@ -1,6 +1,7 @@
-import React from 'react'
-import { Box, Typography, Card, CardContent, FormControl, InputLabel, Select, MenuItem, Switch, FormControlLabel, Button } from '@mui/material'
-import { Palette, Storage, Notifications } from '@mui/icons-material'
+import React, { useState } from 'react'
+import { Box, Typography, Card, CardContent, FormControl, InputLabel, Select, MenuItem, Switch, FormControlLabel, Button, TextField, Alert, Divider } from '@mui/material'
+import { Palette, Storage, Notifications, Psychology, SmartToy } from '@mui/icons-material'
+import { useLocalStorage } from '../hooks/useLocalStorage'
 
 interface SettingsProps {
   themeMode: 'light' | 'dark'
@@ -10,6 +11,28 @@ interface SettingsProps {
 }
 
 const Settings: React.FC<SettingsProps> = ({ themeMode, themeColor, onThemeModeChange, onThemeColorChange }) => {
+  const [apiKey, setApiKey] = useLocalStorage('openai-api-key', '')
+  const [ollamaEnabled, setOllamaEnabled] = useLocalStorage('ollama-enabled', false)
+  const [ollamaModel, setOllamaModel] = useLocalStorage('ollama-model', 'llama2')
+  const [showApiKey, setShowApiKey] = useState(false)
+  const [ollamaStatus, setOllamaStatus] = useState<'checking' | 'available' | 'unavailable'>('checking')
+
+  React.useEffect(() => {
+    checkOllamaStatus()
+  }, [])
+
+  const checkOllamaStatus = async () => {
+    try {
+      const response = await fetch('http://localhost:11434/api/tags')
+      setOllamaStatus(response.ok ? 'available' : 'unavailable')
+    } catch {
+      setOllamaStatus('unavailable')
+    }
+  }
+
+  const installOllama = () => {
+    window.open('https://ollama.ai/download', '_blank')
+  }
   const themeColors = [
     { name: 'Purple', value: 'purple', color: '#6750A4' },
     { name: 'Blue', value: 'blue', color: '#1976D2' },
@@ -30,6 +53,102 @@ const Settings: React.FC<SettingsProps> = ({ themeMode, themeColor, onThemeModeC
     <Box>
       <Typography variant="h4" sx={{ mb: 4, fontWeight: 600 }}>Settings</Typography>
       
+      {/* AI Configuration */}
+      <Card sx={{ mb: 3 }}>
+        <CardContent>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            <Psychology sx={{ mr: 1, color: 'primary.main' }} />
+            <Typography variant="h6">AI Configuration</Typography>
+          </Box>
+          
+          <TextField
+            fullWidth
+            label="OpenAI API Key"
+            type={showApiKey ? 'text' : 'password'}
+            value={apiKey}
+            onChange={(e) => setApiKey(e.target.value)}
+            sx={{ mb: 2 }}
+            helperText="Enter your OpenAI API key to use AI features"
+          />
+          
+          <Button
+            variant="text"
+            size="small"
+            onClick={() => setShowApiKey(!showApiKey)}
+            sx={{ mb: 3 }}
+          >
+            {showApiKey ? 'Hide' : 'Show'} API Key
+          </Button>
+          
+          <Divider sx={{ my: 2 }} />
+          
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            <SmartToy sx={{ mr: 1, color: 'secondary.main' }} />
+            <Typography variant="h6">Ollama (Local AI)</Typography>
+          </Box>
+          
+          {ollamaStatus === 'unavailable' && (
+            <Alert severity="warning" sx={{ mb: 2 }}>
+              Ollama is not installed or running. 
+              <Button size="small" onClick={installOllama} sx={{ ml: 1 }}>
+                Install Ollama
+              </Button>
+            </Alert>
+          )}
+          
+          {ollamaStatus === 'available' && (
+            <Alert severity="success" sx={{ mb: 2 }}>
+              Ollama is running and available
+            </Alert>
+          )}
+          
+          <FormControlLabel
+            control={
+              <Switch
+                checked={ollamaEnabled && ollamaStatus === 'available'}
+                onChange={(e) => setOllamaEnabled(e.target.checked)}
+                disabled={ollamaStatus !== 'available'}
+              />
+            }
+            label="Use Ollama for AI features"
+            sx={{ mb: 2 }}
+          />
+          
+          {ollamaEnabled && ollamaStatus === 'available' && (
+            <Box>
+              <FormControl fullWidth sx={{ mb: 2 }}>
+                <InputLabel>Ollama Model</InputLabel>
+                <Select
+                  value={ollamaModel}
+                  label="Ollama Model"
+                  onChange={(e) => setOllamaModel(e.target.value)}
+                >
+                  <MenuItem value="llama2">Llama 2</MenuItem>
+                  <MenuItem value="codellama">Code Llama</MenuItem>
+                  <MenuItem value="mistral">Mistral</MenuItem>
+                  <MenuItem value="neural-chat">Neural Chat</MenuItem>
+                </Select>
+              </FormControl>
+              <Button
+                variant="outlined"
+                onClick={async () => {
+                  if (window.electronAPI) {
+                    const result = await window.electronAPI.runOllamaModel(ollamaModel)
+                    if (result.success) {
+                      alert(`Started ${ollamaModel} in background terminal`)
+                    } else {
+                      alert(`Failed to start model: ${result.error}`)
+                    }
+                  }
+                }}
+              >
+                Start Model in Background
+              </Button>
+            </Box>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Appearance */}
       <Card sx={{ mb: 3 }}>
         <CardContent>

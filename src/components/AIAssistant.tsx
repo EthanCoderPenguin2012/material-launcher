@@ -20,7 +20,9 @@ const AIAssistant: React.FC = () => {
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const [apiKey, setApiKey] = useState('')
+  const [apiKey, setApiKey] = useState(localStorage.getItem('openai-api-key') || '')
+  const [ollamaEnabled, setOllamaEnabled] = useState(localStorage.getItem('ollama-enabled') === 'true')
+  const [ollamaModel, setOllamaModel] = useState(localStorage.getItem('ollama-model') || 'llama2')
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
@@ -33,8 +35,8 @@ const AIAssistant: React.FC = () => {
 
   const handleSend = async () => {
     if (!input.trim()) return
-    if (!apiKey.trim()) {
-      alert('Please enter your OpenAI API key first')
+    if (!ollamaEnabled && !apiKey.trim()) {
+      alert('Please configure AI settings first (OpenAI API key or enable Ollama)')
       return
     }
 
@@ -50,39 +52,64 @@ const AIAssistant: React.FC = () => {
     setLoading(true)
 
     try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({
-          model: 'gpt-3.5-turbo',
-          messages: [
-            { role: 'system', content: 'You are a helpful AI assistant integrated into a productivity app called Material Launcher. Be concise but helpful.' },
-            ...messages.slice(-10).map(msg => ({
-              role: msg.sender === 'user' ? 'user' : 'assistant',
-              content: msg.text
-            })),
-            { role: 'user', content: input }
-          ],
-          max_tokens: 500,
-          temperature: 0.7
+      let response
+      
+      if (ollamaEnabled) {
+        // Use Ollama via terminal process
+        if (window.electronAPI) {
+          const result = await window.electronAPI.sendToOllama(input)
+          if (result.success && result.response) {
+            const aiResponse: Message = {
+              id: Date.now() + 1,
+              text: result.response,
+              sender: 'ai',
+              timestamp: new Date()
+            }
+            setMessages(prev => [...prev, aiResponse])
+            setLoading(false)
+            return
+          } else {
+            throw new Error(result.error || 'Failed to communicate with Ollama')
+          }
+        }
+      } else {
+        // Use OpenAI
+        response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model: 'gpt-3.5-turbo',
+            messages: [
+              { role: 'system', content: 'You are a helpful AI assistant integrated into a productivity app called Material Launcher. Be concise but helpful.' },
+              ...messages.slice(-10).map(msg => ({
+                role: msg.sender === 'user' ? 'user' : 'assistant',
+                content: msg.text
+              })),
+              { role: 'user', content: input }
+            ],
+            max_tokens: 500,
+            temperature: 0.7
+          })
         })
-      })
+      }
 
-      if (!response.ok) {
+      if (response && !response.ok) {
         throw new Error(`API Error: ${response.status}`)
       }
 
-      const data = await response.json()
-      const aiResponse: Message = {
-        id: Date.now() + 1,
-        text: data.choices[0].message.content,
-        sender: 'ai',
-        timestamp: new Date()
+      if (response) {
+        const data = await response.json()
+        const aiResponse: Message = {
+          id: Date.now() + 1,
+          text: data.choices[0].message.content,
+          sender: 'ai',
+          timestamp: new Date()
+        }
+        setMessages(prev => [...prev, aiResponse])
       }
-      setMessages(prev => [...prev, aiResponse])
     } catch (error) {
       const errorMessage: Message = {
         id: Date.now() + 1,
@@ -100,22 +127,17 @@ const AIAssistant: React.FC = () => {
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>AI Assistant</Typography>
       
-      {!apiKey && (
+      {!ollamaEnabled && !apiKey && (
         <Alert severity="info" sx={{ mb: 2 }}>
-          Enter your OpenAI API key to enable real AI conversations
+          Configure AI settings in Settings tab (OpenAI API key or Ollama)
         </Alert>
       )}
       
-      <TextField
-        fullWidth
-        type="password"
-        label="OpenAI API Key"
-        value={apiKey}
-        onChange={(e) => setApiKey(e.target.value)}
-        sx={{ mb: 2 }}
-        size="small"
-        placeholder="sk-..."
-      />
+      {ollamaEnabled && (
+        <Alert severity="success" sx={{ mb: 2 }}>
+          Using Ollama ({ollamaModel}) for AI conversations
+        </Alert>
+      )}
       
       <Card sx={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 500 }}>
         <CardContent sx={{ flex: 1, overflow: 'auto', p: 0 }}>
@@ -133,7 +155,7 @@ const AIAssistant: React.FC = () => {
                 <Box sx={{ flex: 1 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                     <Chip 
-                      label={message.sender === 'ai' ? 'AI Assistant' : 'You'} 
+                      label={message.sender === 'ai' ? (ollamaEnabled ? `Ollama (${ollamaModel})` : 'OpenAI') : 'You'} 
                       size="small" 
                       color={message.sender === 'ai' ? 'primary' : 'secondary'}
                       variant="outlined"
